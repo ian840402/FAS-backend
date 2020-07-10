@@ -5,10 +5,10 @@ let dbConfig: {};
 if (process.env.NODE_ENV === 'production') {
   dbConfig = {
     dialect: 'mysql',
-    host: 'localhost',
-    database: 'fa_system',
-    username: 'root',
-    password: 'root',
+    host: 'us-cdbr-east-02.cleardb.com',
+    database: 'heroku_570615588927825',
+    username: 'bbc29957001d86',
+    password: '62c1fb00',
   }
 } else {
   dbConfig = {
