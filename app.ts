@@ -3,7 +3,7 @@ import koaLogger from 'koa-logger'
 import koaBodyParser from 'koa-bodyparser'
 import koaCORS from '@koa/cors'
 import database from './database'
-import middleware from './middleware'
+import authentication from './middleware/authentication'
 import router from './routers/router'
 
 const app = new koa()
@@ -13,7 +13,7 @@ app.use(koaLogger())
 app.use(koaCORS())
 app.use(koaBodyParser())
 app.use(database)
-app.use(middleware)
+app.use(authentication)
 app.use(router.routes())
 app.use(router.allowedMethods())
 
