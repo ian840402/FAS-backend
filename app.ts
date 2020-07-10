@@ -7,7 +7,7 @@ import middleware from './middleware'
 import router from './routers/router'
 
 const app = new koa()
-const port = process.env.Port || 27001
+const port = process.env.PORT || 27001
 
 app.use(koaLogger())
 app.use(koaCORS())
