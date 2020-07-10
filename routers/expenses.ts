@@ -9,7 +9,42 @@ const router = new Router({
  * description: get all expenses
  */
 router.get('/', async (ctx: any) => {
-  ctx.body = 'expenses'
+  const pageSize: number = Number(ctx.request.query.page_size) || 10
+  const currentPage: number = Number(ctx.request.query.page) || 1
+  const orderRule: string = ctx.request.query.order_by || 'ASC'
+  const orderKey: string = ctx.request.query.order_key || 'id'
+  const startPage: number = pageSize * (currentPage - 1);
+  const { rows: data, count: total } = await ctx.database.expenses.findAndCountAll({
+    attributes: {
+      exclude: ['user_id', 'account_id', 'type_id'],
+    },
+    include: [
+      {
+        model: ctx.database.user, as: 'user',
+        attributes: ['id', 'name']
+      },
+      {
+        model: ctx.database.account, as: 'account',
+        attributes: ['id', 'name']
+      },
+      {
+        model: ctx.database.expenses_type, as: 'expenses_type',
+        attributes: ['id', 'name']
+      }
+    ],
+    offset: startPage,
+    limit: pageSize,
+    order: [
+      [orderKey, orderRule]
+    ]
+  })
+  ctx.body = {
+    total,
+    data,
+    page_size: pageSize,
+    current_page: currentPage,
+    last_page: Math.ceil(total / pageSize)
+  }
 })
 
 /**
@@ -17,7 +52,11 @@ router.get('/', async (ctx: any) => {
  * description: get a single expenses
  */
 router.get('/:id', async (ctx: any) => {
-  ctx.body = 'expenses'
+  const id: number = Number(ctx.params.id)
+  ctx.assert(!isNaN(id), 400, 'The request is invalid！')
+  const data = await ctx.database.expenses.findByPk(id)
+  ctx.assert(data, 404, 'The data is not found！')
+  ctx.body = data
 })
 
 /**
@@ -25,7 +64,11 @@ router.get('/:id', async (ctx: any) => {
  * description: create new expenses
  */
 router.post('/', async (ctx: any) => {
-  ctx.body = 'expenses'
+  const { type_id, user_id, account_id, money, date, description } = ctx.request.body
+  ctx.assert(type_id && user_id && account_id && money && date, 400, 'Some field is empty！')
+  await ctx.database.expenses.create({ type_id, user_id, account_id, money, date, description })
+  ctx.status = 201
+  ctx.body = { msg: 'The data is created！' }
 })
 
 /**
@@ -33,7 +76,17 @@ router.post('/', async (ctx: any) => {
  * description: update a single expenses
  */
 router.put('/:id', async (ctx: any) => {
-  ctx.body = 'expenses'
+  const id: number = Number(ctx.params.id)
+  ctx.assert(!isNaN(id), 400, 'The request is invalid！')
+  const data = await ctx.database.expenses.findByPk(id)
+  ctx.assert(data, 404, 'The data is not found！')
+  const { type_id, user_id, account_id, money, date, description } = ctx.request.body
+  ctx.assert(type_id && user_id && account_id && money && date, 400, 'Some field is empty！')
+  await ctx.database.expenses.update(
+    { type_id, user_id, account_id, money, date, description },
+    { where: { id }}
+  )
+  ctx.body = { msg: 'The data is updated！' }
 })
 
 /**
@@ -41,7 +94,12 @@ router.put('/:id', async (ctx: any) => {
  * description: delete a single expenses
  */
 router.delete('/:id', async (ctx: any) => {
-  ctx.body = 'expenses'
+  const id: number = Number(ctx.params.id)
+  ctx.assert(!isNaN(id), 400, 'The request is invalid！')
+  const data = await ctx.database.expenses.findByPk(id)
+  ctx.assert(data, 404, 'The data is not found！')
+  await ctx.database.expenses.destroy({ where: { id }})
+  ctx.status = 204
 })
 
 export default router.routes()
