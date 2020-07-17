@@ -1,20 +1,25 @@
 import db from '../config'
 import User from './user'
 import Account from './account'
-import IncomeType from './income-type'
+import RecordType from './record-type'
 
-const Income = db.sequelize.define('income', {
+const Record = db.sequelize.define('record', {
   id: {
     type: db.Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
   },
+  is_income: {
+    type: db.Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
   type_id: {
     type: db.Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
     references: {
-      model: IncomeType,
+      model: RecordType,
       key: 'id',
     },
     onUpdate: 'CASCADE',
@@ -59,4 +64,4 @@ const Income = db.sequelize.define('income', {
   underscored: true,
 })
 
-export default Income;
+export default Record;

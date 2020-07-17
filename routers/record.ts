@@ -1,12 +1,12 @@
 import Router from 'koa-router'
 
 const router = new Router({
-  prefix: '/expenses'
+  prefix: '/records'
 })
 
 /**
  * method: GET
- * description: get all expenses
+ * description: get all record
  */
 router.get('/', async (ctx: any) => {
   const pageSize: number = Number(ctx.request.query.page_size) || 10
@@ -14,7 +14,7 @@ router.get('/', async (ctx: any) => {
   const orderRule: string = ctx.request.query.order_by || 'ASC'
   const orderKey: string = ctx.request.query.order_key || 'id'
   const startPage: number = pageSize * (currentPage - 1);
-  const { rows: data, count: total } = await ctx.database.expenses.findAndCountAll({
+  const { rows: data, count: total } = await ctx.database.record.findAndCountAll({
     attributes: {
       exclude: ['user_id', 'account_id', 'type_id'],
     },
@@ -28,7 +28,7 @@ router.get('/', async (ctx: any) => {
         attributes: ['id', 'name']
       },
       {
-        model: ctx.database.expenses_type, as: 'expenses_type',
+        model: ctx.database.record_type, as: 'record_type',
         attributes: ['id', 'name']
       }
     ],
@@ -49,41 +49,41 @@ router.get('/', async (ctx: any) => {
 
 /**
  * method: GET
- * description: get a single expenses
+ * description: get a single record
  */
 router.get('/:id', async (ctx: any) => {
   const id: number = Number(ctx.params.id)
   ctx.assert(!isNaN(id), 400, 'The request is invalid！')
-  const data = await ctx.database.expenses.findByPk(id)
+  const data = await ctx.database.record.findByPk(id)
   ctx.assert(data, 404, 'The data is not found！')
   ctx.body = data
 })
 
 /**
  * method: POST
- * description: create new expenses
+ * description: create new record
  */
 router.post('/', async (ctx: any) => {
-  const { type_id, user_id, account_id, money, date, description } = ctx.request.body
+  const { is_income, type_id, user_id, account_id, money, date, description } = ctx.request.body
   ctx.assert(type_id && user_id && account_id && money && date, 400, 'Some field is empty！')
-  await ctx.database.expenses.create({ type_id, user_id, account_id, money, date, description })
+  await ctx.database.record.create({ is_income, type_id, user_id, account_id, money, date, description })
   ctx.status = 201
   ctx.body = { msg: 'The data is created！' }
 })
 
 /**
  * method: PUT
- * description: update a single expenses
+ * description: update a single record
  */
 router.put('/:id', async (ctx: any) => {
   const id: number = Number(ctx.params.id)
   ctx.assert(!isNaN(id), 400, 'The request is invalid！')
-  const data = await ctx.database.expenses.findByPk(id)
+  const data = await ctx.database.record.findByPk(id)
   ctx.assert(data, 404, 'The data is not found！')
-  const { type_id, user_id, account_id, money, date, description } = ctx.request.body
+  const { is_income, type_id, user_id, account_id, money, date, description } = ctx.request.body
   ctx.assert(type_id && user_id && account_id && money && date, 400, 'Some field is empty！')
-  await ctx.database.expenses.update(
-    { type_id, user_id, account_id, money, date, description },
+  await ctx.database.record.update(
+    { is_income, type_id, user_id, account_id, money, date, description },
     { where: { id }}
   )
   ctx.body = { msg: 'The data is updated！' }
@@ -91,14 +91,14 @@ router.put('/:id', async (ctx: any) => {
 
 /**
  * method: DELETE
- * description: delete a single expenses
+ * description: delete a single record
  */
 router.delete('/:id', async (ctx: any) => {
   const id: number = Number(ctx.params.id)
   ctx.assert(!isNaN(id), 400, 'The request is invalid！')
-  const data = await ctx.database.expenses.findByPk(id)
+  const data = await ctx.database.record.findByPk(id)
   ctx.assert(data, 404, 'The data is not found！')
-  await ctx.database.expenses.destroy({ where: { id }})
+  await ctx.database.record.destroy({ where: { id }})
   ctx.status = 204
 })
 

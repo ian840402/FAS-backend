@@ -1,6 +1,6 @@
 import db from '../config'
 
-const IncomeType = db.sequelize.define('income_type', {
+const RecordType = db.sequelize.define('record_type', {
   id: {
     type: db.Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
@@ -11,6 +11,11 @@ const IncomeType = db.sequelize.define('income_type', {
     type: db.Sequelize.STRING,
     allowNull: false,
   },
+  is_income: {
+    type: db.Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
   description: {
     type: db.Sequelize.TEXT,
   },
@@ -20,4 +25,4 @@ const IncomeType = db.sequelize.define('income_type', {
   underscored: true,
 })
 
-export default IncomeType;
+export default RecordType;
