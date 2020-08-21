@@ -11,11 +11,14 @@ type Account = {
 
 const feedAccount = async (count: number) => {
   const fakeDataArr: Account[] = []
+  const userData: [] = await databaseModel.user.findAll({ offset: 0, limit: count, raw: true })
+  const idArray: any[] = userData.map((item: any) => item.id )
+
   for (let i = 0; i < count; i++) {
     const fakeData: Account = {
       name: faker.name.findName(),
       bank: faker.name.findName(),
-      user_id: Math.floor(Math.random() * 10) + 1,
+      user_id: idArray[Math.floor(Math.random() * count)],
       init_money: Math.floor(Math.random() * 1000),
       description: faker.lorem.paragraph()
     }
