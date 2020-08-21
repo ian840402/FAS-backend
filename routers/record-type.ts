@@ -9,24 +9,20 @@ const router = new Router({
  * description: get all record_type
  */
 router.get('/', async (ctx: any) => {
-  const pageSize: number = Number(ctx.request.query.page_size) || 10
-  const currentPage: number = Number(ctx.request.query.page) || 1
   const orderRule: string = ctx.request.query.order_by || 'ASC'
   const orderKey: string = ctx.request.query.order_key || 'id'
-  const startPage: number = pageSize * (currentPage - 1);
+  const isIncome: boolean = ctx.request.query.is_income === 'true'
   const { rows: data, count: total } = await ctx.database.record_type.findAndCountAll({
-    offset: startPage,
-    limit: pageSize,
+    where: {
+      is_income: isIncome
+    },
     order: [
       [orderKey, orderRule]
     ]
   })
   ctx.body = {
     total,
-    data,
-    page_size: pageSize,
-    current_page: currentPage,
-    last_page: Math.ceil(total / pageSize)
+    data
   }
 })
 
