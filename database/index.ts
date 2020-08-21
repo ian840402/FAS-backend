@@ -5,34 +5,47 @@ import Record from './models/record'
 import RecordType from './models/record-type'
 
 /**
- * 封裝整個 db instance，並定義模型關聯
+ * 定義模型關聯
  */
-const databaseInstance = async (ctx: any, next: any) => {
-  
-  // User model references
-  User.hasMany(Account, { foreignKey: 'user_id', sourcesKey: 'id' });
-  User.hasMany(Record, { foreignKey: 'user_id', sourcesKey: 'id' });
+// User model references
+User.hasMany(Account, { foreignKey: 'user_id', sourcesKey: 'id' });
+User.hasMany(Record, { foreignKey: 'user_id', sourcesKey: 'id' });
 
-  // Account model references
-  Account.belongsTo(User, { foreignKey: 'user_id', sourcesKey: 'id' });
-  Account.hasMany(Record, { foreignKey: 'account_id', sourcesKey: 'id' });
+// Account model references
+Account.belongsTo(User, { foreignKey: 'user_id', sourcesKey: 'id' });
+Account.hasMany(Record, { foreignKey: 'account_id', sourcesKey: 'id' });
 
-  // Record model references
-  Record.belongsTo(User, { foreignKey: 'user_id', sourcesKey: 'id' });
-  Record.belongsTo(Account, { foreignKey: 'account_id', sourcesKey: 'id' });
-  Record.belongsTo(RecordType, { foreignKey: 'type_id', sourcesKey: 'id' });
+// Record model references
+Record.belongsTo(User, { foreignKey: 'user_id', sourcesKey: 'id' });
+Record.belongsTo(Account, { foreignKey: 'account_id', sourcesKey: 'id' });
+Record.belongsTo(RecordType, { foreignKey: 'type_id', sourcesKey: 'id' });
 
-  // RecordType model references
-  RecordType.hasMany(Record, { foreignKey: 'account_id', sourcesKey: 'id' });
-  
+// RecordType model references
+RecordType.hasMany(Record, { foreignKey: 'account_id', sourcesKey: 'id' });
+
+/**
+ * 封裝 db model 提供給 command 使用
+ */
+export const databaseModel = {
+  ...database,
+  user: User,
+  account: Account,
+  record: Record,
+  record_type: RecordType
+}
+
+/**
+ * 封裝整個 db instance
+ */
+const databaseModule = async (ctx: any, next: any) => {
   ctx.database = {
     ...database,
     user: User,
     account: Account,
     record: Record,
-    record_type: RecordType,
+    record_type: RecordType
   }
   await next();
 };
 
-export default databaseInstance;
+export default databaseModule;

@@ -6,7 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev app.ts",
-    "start": "ts-node app.ts"
+    "start": "ts-node app.ts",
+    "deploy": "git push heroku master",
+    "db-async": "ts-node database/commands/asyncDB.ts",
+    "db-feed": "ts-node database/commands/feedDB.ts",
+    "db-reset": "npm run db-async; npm run db-feed;"
   },
   "repository": {
     "type": "git",
@@ -17,6 +21,7 @@
   "license": "ISC",
   "dependencies": {
     "@koa/cors": "^3.1.0",
+    "@types/faker": "^4.1.12",
     "@types/koa": "^2.11.3",
     "@types/koa-bodyparser": "^4.3.0",
     "@types/koa-logger": "^3.1.1",
@@ -24,15 +29,19 @@
     "@types/koa__cors": "^3.0.1",
     "@types/node": "^14.0.20",
     "@types/sequelize": "^4.28.9",
+    "colors": "^1.4.0",
+    "faker": "^4.1.0",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
     "koa-logger": "^3.2.1",
     "koa-router": "^9.1.0",
     "moment": "^2.27.0",
     "mysql2": "^2.1.0",
+    "mysqldump": "^3.2.0",
     "sequelize": "^6.3.0",
     "ts-node": "^8.10.2",
     "ts-node-dev": "^1.0.0-pre.50",
     "typescript": "^3.9.6"
-  }
+  },
+  "devDependencies": {}
 }
