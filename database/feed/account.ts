@@ -4,6 +4,7 @@ import { databaseModel } from '../index'
 type Account = {
   name: string,
   bank: string,
+  bank_account: string | null,
   user_id: number,
   init_money: number,
   description: string
@@ -18,6 +19,7 @@ const feedAccount = async (count: number) => {
     const fakeData: Account = {
       name: faker.name.findName(),
       bank: faker.name.findName(),
+      bank_account: null,
       user_id: idArray[Math.floor(Math.random() * count)],
       init_money: Math.floor(Math.random() * 1000),
       description: faker.lorem.paragraph()

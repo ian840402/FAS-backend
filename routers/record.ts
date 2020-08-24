@@ -54,7 +54,25 @@ router.get('/', async (ctx: any) => {
 router.get('/:id', async (ctx: any) => {
   const id: number = Number(ctx.params.id)
   ctx.assert(!isNaN(id), 400, 'The request is invalid！')
-  const data = await ctx.database.record.findByPk(id)
+  const data = await ctx.database.record.findByPk(id, {
+    attributes: {
+      exclude: ['user_id', 'account_id', 'type_id'],
+    },
+    include: [
+      {
+        model: ctx.database.user, as: 'user',
+        attributes: ['id', 'name']
+      },
+      {
+        model: ctx.database.account, as: 'account',
+        attributes: ['id', 'name']
+      },
+      {
+        model: ctx.database.record_type, as: 'record_type',
+        attributes: ['id', 'name']
+      }
+    ]
+  })
   ctx.assert(data, 404, 'The data is not found！')
   ctx.body = data
 })

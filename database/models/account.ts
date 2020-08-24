@@ -16,6 +16,10 @@ const Account = db.sequelize.define('account', {
     type: db.Sequelize.STRING,
     allowNull: false,
   },
+  bank_account: {
+    type: db.Sequelize.STRING,
+    allowNull: true,
+  },
   user_id: {
     type: db.Sequelize.INTEGER.UNSIGNED,
     allowNull: false,

@@ -44,7 +44,15 @@ router.get('/', async (ctx: any) => {
 router.get('/:id', async (ctx: any) => {
   const id: number = Number(ctx.params.id)
   ctx.assert(!isNaN(id), 400, 'The request is invalid！')
-  const data = await ctx.database.account.findByPk(id)
+  const data = await ctx.database.account.findByPk(id, {
+    attributes: {
+      exclude: ['user_id'],
+    },
+    include: [{
+      model: ctx.database.user, as: 'user',
+      attributes: ['id', 'name']
+    }]
+  })
   ctx.assert(data, 404, 'The data is not found！')
   ctx.body = data
 })
@@ -54,9 +62,9 @@ router.get('/:id', async (ctx: any) => {
  * description: create new account
  */
 router.post('/', async (ctx: any) => {
-  const { name, bank, user_id, init_money, description } = ctx.request.body
+  const { name, bank, bank_account, user_id, init_money, description } = ctx.request.body
   ctx.assert(name && bank && user_id && init_money, 400, 'Some field is empty！')
-  await ctx.database.account.create({ name, bank, user_id, init_money, description })
+  await ctx.database.account.create({ name, bank, bank_account, user_id, init_money, description })
   ctx.status = 201
   ctx.body = { msg: 'The data is created！' }
 })
@@ -70,10 +78,10 @@ router.put('/:id', async (ctx: any) => {
   ctx.assert(!isNaN(id), 400, 'The request is invalid！')
   const data = await ctx.database.account.findByPk(id)
   ctx.assert(data, 404, 'The data is not found！')
-  const { name, bank, user_id, init_money, description } = ctx.request.body
+  const { name, bank, bank_account, user_id, init_money, description } = ctx.request.body
   ctx.assert(name && bank && user_id && init_money, 400, 'Some field is empty！')
   await ctx.database.account.update(
-    { name, bank, user_id, init_money, description },
+    { name, bank, bank_account, user_id, init_money, description },
     { where: { id }}
   )
   ctx.body = { msg: 'The data is updated！' }
