@@ -1,22 +1,23 @@
+const Sequelize = require('sequelize');
 import db from '../config'
 import User from './user'
 import Account from './account'
 import RecordType from './record-type'
 
-const Record = db.sequelize.define('record', {
+const Record = db.define('record', {
   id: {
-    type: db.Sequelize.INTEGER.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
   },
   is_income: {
-    type: db.Sequelize.BOOLEAN,
+    type: Sequelize.BOOLEAN,
     allowNull: false,
     defaultValue: false,
   },
   type_id: {
-    type: db.Sequelize.INTEGER.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
     references: {
       model: RecordType,
@@ -26,7 +27,7 @@ const Record = db.sequelize.define('record', {
     onDelete: 'NO ACTION',
   },
   account_id: {
-    type: db.Sequelize.INTEGER.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
     references: {
       model: Account,
@@ -36,7 +37,7 @@ const Record = db.sequelize.define('record', {
     onDelete: 'NO ACTION',
   },
   user_id: {
-    type: db.Sequelize.INTEGER.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
     references: {
       model: User,
@@ -46,17 +47,17 @@ const Record = db.sequelize.define('record', {
     onDelete: 'NO ACTION',
   },
   money: {
-    type: db.Sequelize.INTEGER.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     defaultValue: 0,
     allowNull: false,
   },
   date: {
-    type: db.Sequelize.DATE,
-    defaultValue: db.Sequelize.NOW,
+    type: Sequelize.DATE,
+    defaultValue: Sequelize.NOW,
     allowNull: false,
   },
   description: {
-    type: db.Sequelize.TEXT,
+    type: Sequelize.TEXT,
   },
 }, {
   freezeTableName: true,

@@ -1,18 +1,19 @@
+const Sequelize = require('sequelize');
 import db from '../config'
 
-const User = db.sequelize.define('user', {
+const User = db.define('user', {
   id: {
-    type: db.Sequelize.INTEGER.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
   },
   name: {
-    type: db.Sequelize.STRING,
+    type: Sequelize.STRING,
     allowNull: false,
   },
   description: {
-    type: db.Sequelize.TEXT,
+    type: Sequelize.TEXT,
   },
 }, {
   freezeTableName: true,

@@ -3,6 +3,7 @@ import accountRoute from './account'
 import userRoute from './user'
 import recordRoute from './record'
 import recordTypeRoute from './record-type'
+import InfoRoute from './info'
 
 const router = new Router()
 
@@ -14,5 +15,6 @@ router.use(accountRoute)
 router.use(userRoute)
 router.use(recordRoute)
 router.use(recordTypeRoute)
+router.use(InfoRoute)
 
 export default router

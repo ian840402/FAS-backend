@@ -1,27 +1,28 @@
+const Sequelize = require('sequelize');
 import db from '../config'
 import User from './user'
 
-const Account = db.sequelize.define('account', {
+const Account = db.define('account', {
   id: {
-    type: db.Sequelize.INTEGER.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
   },
   name: {
-    type: db.Sequelize.STRING,
+    type: Sequelize.STRING,
     allowNull: false,
   },
   bank: {
-    type: db.Sequelize.STRING,
+    type: Sequelize.STRING,
     allowNull: false,
   },
   bank_account: {
-    type: db.Sequelize.STRING,
+    type: Sequelize.STRING,
     allowNull: true,
   },
   user_id: {
-    type: db.Sequelize.INTEGER.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
     references: {
       model: User,
@@ -31,12 +32,12 @@ const Account = db.sequelize.define('account', {
     onDelete: 'NO ACTION',
   },
   init_money: {
-    type: db.Sequelize.INTEGER.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     defaultValue: 0,
     allowNull: false,
   },
   description: {
-    type: db.Sequelize.TEXT,
+    type: Sequelize.TEXT,
   },
 }, {
   freezeTableName: true,

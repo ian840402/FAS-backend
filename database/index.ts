@@ -27,7 +27,7 @@ RecordType.hasMany(Record, { foreignKey: 'account_id', sourcesKey: 'id' });
  * 封裝 db model 提供給 command 使用
  */
 export const databaseModel = {
-  ...database,
+  database,
   user: User,
   account: Account,
   record: Record,
@@ -39,7 +39,7 @@ export const databaseModel = {
  */
 const databaseModule = async (ctx: any, next: any) => {
   ctx.database = {
-    ...database,
+    database,
     user: User,
     account: Account,
     record: Record,

@@ -7,6 +7,8 @@ const router = new Router({
 /**
  * method: GET
  * description: get all record
+ * 
+ * params: page_size, page, order_by, order_key
  */
 router.get('/', async (ctx: any) => {
   const pageSize: number = Number(ctx.request.query.page_size) || 10

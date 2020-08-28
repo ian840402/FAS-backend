@@ -1,23 +1,24 @@
+const Sequelize = require('sequelize');
 import db from '../config'
 
-const RecordType = db.sequelize.define('record_type', {
+const RecordType = db.define('record_type', {
   id: {
-    type: db.Sequelize.INTEGER.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
   },
   name: {
-    type: db.Sequelize.STRING,
+    type: Sequelize.STRING,
     allowNull: false,
   },
   is_income: {
-    type: db.Sequelize.BOOLEAN,
+    type: Sequelize.BOOLEAN,
     allowNull: false,
     defaultValue: false,
   },
   description: {
-    type: db.Sequelize.TEXT,
+    type: Sequelize.TEXT,
   },
 }, {
   freezeTableName: true,

@@ -7,6 +7,8 @@ const router = new Router({
 /**
  * method: GET
  * description: get all record_type
+ * 
+ * params: order_by, order_key, is_income
  */
 router.get('/', async (ctx: any) => {
   const orderRule: string = ctx.request.query.order_by || 'ASC'
