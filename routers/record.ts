@@ -1,8 +1,14 @@
 import Router from 'koa-router'
+import moment from 'moment'
+import { RecordType, RecordData } from '../models/records'
+
+const { Op } = require('sequelize')
+
 
 const router = new Router({
   prefix: '/records'
 })
+
 
 /**
  * method: GET
@@ -49,6 +55,7 @@ router.get('/', async (ctx: any) => {
   }
 })
 
+
 /**
  * method: GET
  * description: get a single record
@@ -79,6 +86,100 @@ router.get('/:id', async (ctx: any) => {
   ctx.body = data
 })
 
+
+/**
+ * method: GET
+ * description: get period data
+ * 
+ * params: start_at, end_at
+ */
+router.get('/statistic/period', async (ctx: any) => {
+  const start: string = ctx.request.query.start_at || new Date()
+  const end: string = ctx.request.query.end_at || new Date()
+  const startDate: string = `${moment(start).format('YYYY-MM-DD')} 00:00`
+  const endDate: string = `${moment(end).format('YYYY-MM-DD')} 23:59`
+  const data: RecordType[] = await ctx.database.record.findAll({
+    where: {
+      date: {
+        [Op.gt]: startDate,
+        [Op.lt]: endDate
+      }
+    }
+  })
+
+  const recordData = new RecordData(data)
+
+  ctx.body = {
+    data: recordData.getData(),
+    incomeTotal: recordData.getIncomeMoneyTotal(),
+    expenseTotal: recordData.getExpenseMoneyTotal()
+  }
+})
+
+
+/**
+ * method: GET
+ * description: get statistic data
+ */
+router.get('/statistic/info', async (ctx: any) => {  
+  const currentQuarter: number = moment().quarter()
+  const currentYear: number = moment().year()
+  const currentMonth: number = moment().month()
+
+  // First day of current quarter
+  const quarterStart: string = moment(`${currentYear}-01-01`)
+    .quarter(currentQuarter)
+    .format('YYYY-MM-DD')
+  
+  // Last day of current quarter
+  const endMonth: number = 3 * currentQuarter
+  const endMonthDay: number = moment(currentYear + '-' + endMonth).daysInMonth()
+  const quarterEnd: string = moment(`${currentYear}-${endMonth}-${endMonthDay}`)
+    .format('YYYY-MM-DD')
+
+  // The current quarter data
+  const quarterData: RecordType[] = await ctx.database.record.findAll({
+    where: {
+      date: {
+        [Op.gt]: `${quarterStart} 00:00`,
+        [Op.lt]: `${quarterEnd} 23:59`
+      }
+    }
+  })
+
+  // The current month data
+  const monthData = quarterData
+    .filter((item: RecordType) => {
+      return moment(item.date).month() === currentMonth
+    })
+
+  // The today data
+  const todayData = quarterData
+    .filter((item: RecordType) => {
+      return moment(item.date).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')
+    })
+
+  const quarterRecordData = new RecordData(quarterData)
+  const monthRecordData = new RecordData(monthData)
+  const todayRecordData = new RecordData(todayData)
+
+  ctx.body = {
+    quarter: {
+      income: quarterRecordData.getIncomeMoneyTotal(),
+      expense: quarterRecordData.getExpenseMoneyTotal()
+    },
+    month: {
+      income: monthRecordData.getIncomeMoneyTotal(),
+      expense: monthRecordData.getExpenseMoneyTotal()
+    },
+    today: {
+      income: todayRecordData.getIncomeMoneyTotal(),
+      expense: todayRecordData.getExpenseMoneyTotal()
+    }
+  }
+})
+
+
 /**
  * method: POST
  * description: create new record
@@ -90,6 +191,7 @@ router.post('/', async (ctx: any) => {
   ctx.status = 201
   ctx.body = { msg: 'The data is created！' }
 })
+
 
 /**
  * method: PUT
@@ -108,6 +210,7 @@ router.put('/:id', async (ctx: any) => {
   )
   ctx.body = { msg: 'The data is updated！' }
 })
+
 
 /**
  * method: DELETE
